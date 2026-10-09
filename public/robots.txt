@@ -1,0 +1,50 @@
+# robots.txt for https://giovannimariarava.com
+#
+# IMPORTANT: robots.txt is a polite request, not an access control. Well-behaved crawlers
+# honour it; others do not. It cannot protect anything private (there is nothing private here).
+# Cloudflare may also prepend its own "managed" AI-crawler rules if you enable
+# "AI Crawl Control" / managed robots.txt in the dashboard — check the live file after deploy.
+#
+# How this file is organised (see docs/seo-and-ai.md):
+#   1. Search engines and user-triggered AI agents/assistants -> ALLOWED (default below).
+#   2. AI *training* crawlers -> DECISION PENDING (TODO below, currently not restricted).
+
+# ---------------------------------------------------------------------------
+# 1. Everyone is allowed by default. This covers:
+#    - search engines: Googlebot, Bingbot, DuckDuckBot, Applebot ...
+#    - AI search / answer engines indexing for citations: OAI-SearchBot, Claude-SearchBot, PerplexityBot
+#    - agents fetching a page because a user asked: ChatGPT-User, Claude-User, Perplexity-User
+User-agent: *
+Allow: /
+
+# ---------------------------------------------------------------------------
+# 2. TODO(giovanni): DECIDE whether to opt out of AI model TRAINING.
+#    Uncomment the blocks you want. Opting out does not affect search ranking or the
+#    search/agent bots above (Google-Extended and Applebot-Extended are separate control tokens
+#    from Googlebot / Applebot, so blocking them does not remove you from Google/Apple search).
+#
+#    Considerations: you present at RSA to security people and want visibility, including inside
+#    AI assistants (allowing = more reach); blocking = more control over how the content is reused.
+#
+# User-agent: GPTBot
+# Disallow: /
+#
+# User-agent: ClaudeBot
+# Disallow: /
+#
+# User-agent: Google-Extended
+# Disallow: /
+#
+# User-agent: Applebot-Extended
+# Disallow: /
+#
+# User-agent: CCBot
+# Disallow: /
+#
+# User-agent: Bytespider
+# Disallow: /
+#
+# User-agent: meta-externalagent
+# Disallow: /
+
+Sitemap: https://giovannimariarava.com/sitemap-index.xml
