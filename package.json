@@ -1,0 +1,38 @@
+{
+  "name": "giovannimariarava-com",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Personal website of Giovanni Maria Rava (static Astro site).",
+  "engines": {
+    "node": ">=24.21.0 <25"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "links": "linkinator dist --recurse --clean-urls --directory-listing --check-fragments --skip \"^https?://(?!(localhost|127\\\\.0\\\\.0\\\\.1))\" --skip \"\\\\.well-known\" --verbosity error",
+    "verify": "npm run format:check && npm run check && npm run check:security-txt && npm run build && npm run links",
+    "links:external": "linkinator dist --recurse --clean-urls --directory-listing --skip \"\\\\.well-known\" --verbosity error",
+    "check:security-txt": "node scripts/check-security-txt.mjs"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "8.0.3",
+    "@astrojs/rss": "4.0.19",
+    "@astrojs/sitemap": "3.7.4",
+    "@fontsource/inter": "5.3.0",
+    "@fontsource/jetbrains-mono": "5.3.0",
+    "astro": "7.3.8"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "linkinator": "8.1.0",
+    "prettier": "3.9.9",
+    "prettier-plugin-astro": "1.1.1",
+    "typescript": "6.0.3",
+    "wrangler": "4.149.0"
+  }
+}

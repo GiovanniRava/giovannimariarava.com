@@ -1,0 +1,8 @@
+dist/
+.astro/
+node_modules/
+package-lock.json
+# Cloudflare's own syntax, not something Prettier understands.
+public/_headers
+public/.well-known/security.txt
+public/robots.txt
