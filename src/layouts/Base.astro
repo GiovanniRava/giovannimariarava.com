@@ -1,0 +1,52 @@
+---
+/**
+ * Base layout: document shell shared by every page.
+ * - Semantic landmarks (header / nav / main / footer) + a skip link.
+ * - Self-hosted fonts via @fontsource, imported in styles/global.css (no third-party requests).
+ * - Zero JavaScript: theme follows `prefers-color-scheme` in CSS only.
+ */
+import '../styles/global.css';
+import SEO from '../components/SEO.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  type?: 'website' | 'article';
+  image?: string;
+  published?: Date;
+  modified?: Date | undefined;
+  noindex?: boolean;
+}
+const props = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title="Writing — Giovanni Maria Rava"
+      href="/writing/rss.xml"
+    />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <SEO {...props} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
+    <Header />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

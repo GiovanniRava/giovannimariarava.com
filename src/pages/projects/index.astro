@@ -1,0 +1,15 @@
+---
+import Base from '../../layouts/Base.astro';
+import EntryList from '../../components/EntryList.astro';
+import { getPublished } from '../../lib/collections';
+
+const entries = await getPublished('projects');
+---
+
+<Base title="Projects" description="Software projects and tools.">
+  <div class="wrap entry-section">
+    <h1>Projects</h1>
+    <p class="muted">Software projects and tools.</p>
+    <EntryList section="projects" {entries} />
+  </div>
+</Base>

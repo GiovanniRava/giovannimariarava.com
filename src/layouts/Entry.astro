@@ -1,0 +1,104 @@
+---
+/**
+ * Detail-page layout for research / projects / writing entries.
+ * Adds: h1, explicit dates, tags, links, and the right JSON-LD type
+ * (ScholarlyArticle for research, BlogPosting for writing, CreativeWork for projects).
+ */
+import type { CollectionEntry } from 'astro:content';
+import Base from './Base.astro';
+import JsonLd from '../components/JsonLd.astro';
+import { humanDate, isoDate } from '../lib/collections';
+import { SITE } from '../lib/site';
+
+type Section = 'research' | 'projects' | 'writing';
+interface Props {
+  section: Section;
+  entry: CollectionEntry<Section>;
+}
+const { section, entry } = Astro.props;
+const { title, description, date, updated, tags, links } = entry.data;
+const url = new URL(`/${section}/${entry.id}`, Astro.site).href;
+
+const schemaType = {
+  research: 'ScholarlyArticle',
+  projects: 'CreativeWork',
+  writing: 'BlogPosting',
+}[section];
+
+const authors =
+  section === 'research' && 'authors' in entry.data && entry.data.authors
+    ? entry.data.authors
+    : [SITE.name];
+
+const jsonLd = {
+  '@type': schemaType,
+  headline: title,
+  description,
+  url,
+  mainEntityOfPage: url,
+  datePublished: isoDate(date),
+  ...(updated && { dateModified: isoDate(updated) }),
+  keywords: tags,
+  inLanguage: 'en',
+  author: authors.map((name) => ({
+    '@type': 'Person',
+    name,
+    ...(name === SITE.name && { url: SITE.url }),
+  })),
+};
+
+const sectionLabel = { research: 'Research', projects: 'Projects', writing: 'Writing' }[section];
+---
+
+<Base {title} {description} type="article" published={date} modified={updated}>
+  <JsonLd slot="head" data={jsonLd} />
+  <article class="wrap prose">
+    <nav aria-label="Breadcrumb" class="breadcrumb">
+      <a href={`/${section}`}>← {sectionLabel}</a>
+    </nav>
+    <header>
+      <h1>{title}</h1>
+      <p class="meta">
+        <span>
+          Published <time datetime={isoDate(date)}>{humanDate(date)}</time>
+        </span>
+        {updated && (
+          <span>
+            Updated <time datetime={isoDate(updated)}>{humanDate(updated)}</time>
+          </span>
+        )}
+      </p>
+      {tags.length > 0 && (
+        <ul class="tags" aria-label="Tags">
+          {tags.map((t) => (
+            <li class="tag">{t}</li>
+          ))}
+        </ul>
+      )}
+      {(links.repo || links.pdf || links.demo) && (
+        <ul class="links" aria-label="Links">
+          {links.repo && (
+            <li>
+              <a href={links.repo} rel="noopener">
+                Repository
+              </a>
+            </li>
+          )}
+          {links.pdf && (
+            <li>
+              <a href={links.pdf}>PDF</a>
+            </li>
+          )}
+          {links.demo && (
+            <li>
+              <a href={links.demo} rel="noopener">
+                Demo
+              </a>
+            </li>
+          )}
+        </ul>
+      )}
+    </header>
+    <slot />
+  </article>
+</Base>

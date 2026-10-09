@@ -1,0 +1,58 @@
+---
+/**
+ * <SEO> — all document-level metadata in one place: title, description,
+ * canonical URL, Open Graph and Twitter card. Rendered inside <head> by
+ * layouts/Base.astro; pages pass props through the layout, never use it directly.
+ */
+import { SITE, publicPath } from '../lib/site';
+
+interface Props {
+  /** Page-specific title. The site name is appended unless this IS the site name. */
+  title: string;
+  description: string;
+  /** Open Graph type: `website` for indexes, `article` for detail pages. */
+  type?: 'website' | 'article';
+  /** Site-relative or absolute image URL for social previews. */
+  image?: string;
+  /** Article-only: ISO-able dates for og:article:* tags. */
+  published?: Date;
+  modified?: Date | undefined;
+  /** Set on pages that must not be indexed (e.g. the 404 page). */
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  type = 'website',
+  image = SITE.defaultOgImage,
+  published,
+  modified,
+  noindex = false,
+} = Astro.props;
+
+const fullTitle = title === SITE.name ? title : `${title} — ${SITE.name}`;
+// One canonical URL per page: origin + path, no query string, no trailing slash (except "/").
+const canonical = new URL(publicPath(Astro.url.pathname), Astro.site).href;
+const imageUrl = new URL(image, Astro.site).href;
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex" />}
+
+<meta property="og:site_name" content={SITE.name} />
+<meta property="og:locale" content="en_GB" />
+<meta property="og:type" content={type} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={imageUrl} />
+{published && <meta property="article:published_time" content={published.toISOString()} />}
+{modified && <meta property="article:modified_time" content={modified.toISOString()} />}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />

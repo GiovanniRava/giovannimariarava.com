@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../lib/site';
+---
+
+<Base title="Privacy" description="What data this website collects: essentially none.">
+  <div class="wrap prose">
+    <h1>Privacy</h1>
+    <p>This site is a static set of pages. It has no accounts, forms, comments or database.</p>
+    <h2>What is not used</h2>
+    <ul>
+      <li>No cookies, no local storage, no fingerprinting.</li>
+      <li>No third-party scripts, fonts, embeds or trackers. Fonts are served from this site.</li>
+    </ul>
+    <h2>What is collected</h2>
+    <p>
+      The hosting provider (Cloudflare) processes standard request metadata (such as IP address and
+      user agent) to deliver the site and protect it from abuse, and provides aggregate traffic
+      statistics. No tracking script runs in your browser.
+    </p>
+    <!-- TODO(giovanni): confirm the analytics choice. If you enable Cloudflare Web Analytics
+         (cookieless) it injects a script from static.cloudflareinsights.com, which requires
+         updating the CSP in public/_headers AND this page. See docs/security.md. -->
+    <h2>Email</h2>
+    <p>
+      If you write to <a href={`mailto:${SITE.email}`}>{SITE.email}</a>, the message is forwarded by
+      Cloudflare Email Routing to a personal mailbox and kept only as long as needed to reply.
+    </p>
+    <h2>Contact</h2>
+    <p>Questions about this page: the same address above.</p>
+  </div>
+</Base>

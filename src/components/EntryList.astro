@@ -1,0 +1,44 @@
+---
+/**
+ * Reusable list of collection entries (research / projects / writing).
+ * Semantic: an ordered-by-date <ul> of <article>s with explicit <time> elements.
+ */
+import type { CollectionEntry } from 'astro:content';
+import { humanDate, isoDate } from '../lib/collections';
+
+interface Props {
+  section: 'research' | 'projects' | 'writing';
+  entries: CollectionEntry<'research' | 'projects' | 'writing'>[];
+  /** Heading level used for each entry title, so the outline stays correct. */
+  headingLevel?: 'h2' | 'h3';
+}
+const { section, entries, headingLevel = 'h2' } = Astro.props;
+const Heading = headingLevel;
+---
+
+{entries.length === 0 ? (
+  <p class="muted">Nothing published yet.</p>
+) : (
+  <ul class="entry-list">
+    {entries.map((entry) => (
+      <li>
+        <article class="entry">
+          <Heading>
+            <a href={`/${section}/${entry.id}`}>{entry.data.title}</a>
+          </Heading>
+          <p class="meta">
+            <time datetime={isoDate(entry.data.date)}>{humanDate(entry.data.date)}</time>
+            {entry.data.tags.length > 0 && (
+              <span class="tags">
+                {entry.data.tags.map((t) => (
+                  <span class="tag">{t}</span>
+                ))}
+              </span>
+            )}
+          </p>
+          <p>{entry.data.description}</p>
+        </article>
+      </li>
+    ))}
+  </ul>
+)}

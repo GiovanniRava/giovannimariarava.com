@@ -1,0 +1,26 @@
+---
+import { NAV, SITE, publicPath } from '../lib/site';
+
+const path = publicPath(Astro.url.pathname);
+// A section is "current" for its index and all of its detail pages.
+const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="/">
+      {SITE.name}
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        {NAV.map((item) => (
+          <li>
+            <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>

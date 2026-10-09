@@ -1,0 +1,15 @@
+---
+/**
+ * Emits a JSON-LD structured-data block (https://schema.org).
+ * `application/ld+json` is an inert data block, not executable script, so it
+ * is not subject to `script-src` in the CSP (see docs/security.md).
+ */
+interface Props {
+  data: Record<string, unknown>;
+}
+const { data } = Astro.props;
+// Escape "<" so content can never close the <script> element early.
+const json = JSON.stringify({ '@context': 'https://schema.org', ...data }).replace(/</g, '\\u003c');
+---
+
+<script type="application/ld+json" set:html={json} />

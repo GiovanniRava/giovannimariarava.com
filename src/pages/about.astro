@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+import { SITE } from '../lib/site';
+---
+
+<Base title="About" description={`About ${SITE.name}.`}>
+  <div class="wrap prose">
+    <h1>About</h1>
+    <!-- TODO(giovanni): write this page. Placeholders only; do not publish with TODOs. -->
+    <p>TODO: short bio.</p>
+    <h2>Background</h2>
+    <p>TODO: professional background (Java/Spring Boot, Angular, IAM/SPID).</p>
+    <h2>Research interests</h2>
+    <p>TODO: research interests (security of LLM-based code review).</p>
+    <h2>Contact</h2>
+    <p>
+      Email: <a href={`mailto:${SITE.email}`}>{SITE.email}</a>. To report a security issue with this
+      website, see <a href="/.well-known/security.txt">security.txt</a>.
+    </p>
+  </div>
+</Base>

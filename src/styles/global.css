@@ -1,0 +1,322 @@
+/*
+ * Global stylesheet — plain CSS, no framework, no preprocessor.
+ *
+ * Layout of this file:
+ *   1. Design tokens (custom properties) + light/dark themes
+ *   2. Reset / base elements
+ *   3. Layout (wrap, header, footer)
+ *   4. Content (prose, entry lists, tags)
+ *   5. Utilities
+ *
+ * Dark mode uses ONLY `prefers-color-scheme` (no JS toggle by design).
+ * Colour pairs below meet WCAG AA contrast (>= 4.5:1 for text) — re-check if edited.
+ */
+
+/*
+ * Fonts: self-hosted through @fontsource (Latin subset only — the site is English-only).
+ * WHY not Astro's Fonts API: it emits inline <style> blocks, which would force
+ * 'unsafe-inline' (or build-specific hashes) into the CSP. These imports compile to an
+ * external CSS file + woff2 files on our own origin, so `style-src 'self'` is enough.
+ * See docs/security.md.
+ */
+@import '@fontsource/inter/latin-400.css';
+@import '@fontsource/inter/latin-600.css';
+@import '@fontsource/inter/latin-700.css';
+@import '@fontsource/jetbrains-mono/latin-400.css';
+
+/* 1. Tokens ------------------------------------------------------------- */
+:root {
+  color-scheme: light dark;
+
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-code: 'JetBrains Mono', ui-monospace, monospace;
+
+  --measure: 68ch; /* comfortable line length for reading */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 3rem;
+  --radius: 0.5rem;
+
+  /* Light theme */
+  --bg: #ffffff;
+  --surface: #f5f6f8;
+  --text: #16181d;
+  --muted: #4a5160;
+  --border: #d5d9e0;
+  --accent: #0b4fd4;
+  --accent-text: #ffffff;
+  --focus: #b45309;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f1115;
+    --surface: #181b22;
+    --text: #e8eaee;
+    --muted: #a6adbb;
+    --border: #2c313c;
+    --accent: #7aa7ff;
+    --accent-text: #0f1115;
+    --focus: #fbbf24;
+  }
+}
+
+/* 2. Reset / base ------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: auto 1fr auto; /* sticky footer without JS */
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.25;
+  margin: var(--space-4) 0 var(--space-2);
+}
+h1 {
+  font-size: clamp(1.75rem, 1.2rem + 2vw, 2.5rem);
+}
+h2 {
+  font-size: 1.5rem;
+}
+h3 {
+  font-size: 1.2rem;
+}
+
+p,
+ul,
+ol {
+  margin: 0 0 var(--space-3);
+}
+
+a {
+  color: var(--accent);
+  text-underline-offset: 0.2em;
+}
+a:hover {
+  text-decoration-thickness: 2px;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+code,
+pre {
+  font-family: var(--font-code);
+  font-size: 0.92em;
+}
+:not(pre) > code {
+  background: var(--surface);
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+}
+pre {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+  overflow-x: auto;
+}
+
+blockquote {
+  margin: var(--space-3) 0;
+  padding: var(--space-1) var(--space-3);
+  border-inline-start: 4px solid var(--border);
+  color: var(--muted);
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 3. Layout ------------------------------------------------------------- */
+.wrap {
+  width: min(100% - 2rem, 60rem);
+  margin-inline: auto;
+}
+
+.skip-link {
+  position: absolute;
+  inset-inline-start: var(--space-2);
+  top: -4rem;
+  background: var(--accent);
+  color: var(--accent-text);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius);
+  z-index: 10;
+}
+.skip-link:focus {
+  top: var(--space-2);
+}
+
+.site-header {
+  border-bottom: 1px solid var(--border);
+}
+.site-header .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  padding-block: var(--space-3);
+}
+.brand {
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+.site-header ul,
+.site-footer ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-4);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.site-header nav a {
+  color: var(--text);
+  text-decoration: none;
+  padding-block: var(--space-1);
+  border-bottom: 2px solid transparent;
+}
+.site-header nav a:hover,
+.site-header nav a[aria-current='page'] {
+  border-bottom-color: var(--accent);
+}
+
+main {
+  padding-block: var(--space-4) var(--space-5);
+}
+
+.site-footer {
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+.site-footer .wrap {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  padding-block: var(--space-4);
+}
+.site-footer p {
+  margin: 0;
+}
+
+/* 4. Content ------------------------------------------------------------ */
+.prose {
+  max-width: var(--measure);
+}
+.prose > * + h2 {
+  margin-top: var(--space-5);
+}
+
+.breadcrumb {
+  margin-bottom: var(--space-3);
+  font-size: 0.95rem;
+}
+
+.meta {
+  color: var(--muted);
+  font-size: 0.95rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.tags,
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  list-style: none;
+  padding: 0;
+}
+.tag {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0 var(--space-3);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.links a {
+  font-weight: 600;
+}
+
+/* Entry list: becomes a 2-column grid when the *container* is wide enough
+   (container query, so it adapts to where it is placed, not to the viewport). */
+.entry-section {
+  container-type: inline-size;
+}
+.entry-list {
+  display: grid;
+  gap: var(--space-3);
+  list-style: none;
+  padding: 0;
+}
+@container (min-width: 40rem) {
+  .entry-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.entry {
+  height: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-3) var(--space-4);
+}
+.entry h2,
+.entry h3 {
+  margin-top: 0;
+  font-size: 1.15rem;
+}
+.entry p:last-child {
+  margin-bottom: 0;
+}
+
+.hero {
+  max-width: var(--measure);
+}
+.lede {
+  font-size: 1.2rem;
+}
+
+/* 5. Utilities ---------------------------------------------------------- */
+.muted {
+  color: var(--muted);
+}
