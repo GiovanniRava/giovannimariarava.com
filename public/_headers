@@ -1,0 +1,48 @@
+# Cloudflare static-assets headers — https://developers.cloudflare.com/workers/static-assets/headers/
+# Applies to every file served from dist/. Max 100 rules, 2000 chars per line.
+# Rationale for each header: docs/security.md. Test with https://securityheaders.com
+# and https://csp-evaluator.withgoogle.com after every deploy.
+
+/*
+  # --- Content-Security-Policy -------------------------------------------------
+  # Deny by default, then allow only what this site actually uses:
+  #   style-src 'self'   -> the one external CSS file (Astro `inlineStylesheets: 'never'`)
+  #   font-src  'self'   -> self-hosted woff2 (@fontsource)
+  #   img-src   'self'   -> favicon.svg, og image
+  #   script-src 'none' -> the site ships NO JavaScript. (The JSON-LD <script type="application/ld+json">
+  #                        blocks are inert data, not executed, so they are unaffected.)
+  # No 'unsafe-inline', no 'unsafe-eval', no hashes, no nonces needed.
+  # If you ever add JS, prefer Astro's `security.csp` option (hashes) over loosening this.
+  # If you enable an analytics beacon, add its origin here AND update /privacy.
+  Content-Security-Policy: default-src 'none'; script-src 'none'; style-src 'self'; font-src 'self'; img-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests
+
+  # Stop MIME sniffing.
+  X-Content-Type-Options: nosniff
+
+  # Send no Referer header at all: outbound links reveal nothing about where the visitor came from.
+  Referrer-Policy: no-referrer
+
+  # Switch off powerful browser features the site never uses.
+  Permissions-Policy: accelerometer=(), autoplay=(), camera=(), display-capture=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), publickey-credentials-get=(), usb=(), xr-spatial-tracking=()
+
+  # Isolate the browsing context group (protects against cross-window attacks, e.g. Spectre-class).
+  Cross-Origin-Opener-Policy: same-origin
+
+  # Legacy twin of CSP frame-ancestors, for very old browsers.
+  X-Frame-Options: DENY
+
+  # --- HSTS (Strict-Transport-Security): INTENTIONALLY NOT ENABLED YET ----------
+  # HSTS tells browsers "HTTPS only, for this long". It is sticky: if enabled too early and
+  # something is still HTTP-only (a subdomain, a forgotten service), visitors are locked out
+  # until max-age expires. Enable it only when ALL of these are true:
+  #   1. The site has been live on HTTPS and verified working (apex + www + any subdomain you use).
+  #   2. You do not need plain HTTP on any subdomain.
+  #   3. Roll out gradually: first `max-age=300`, then 1 day, 1 week, 1 month, finally 1 year.
+  # Final value (add as a line in this block):
+  #   Strict-Transport-Security: max-age=31536000; includeSubDomains
+  # Add `; preload` and submit to https://hstspreload.org ONLY if you are sure: removal is slow.
+  # (Alternative: enable it in the Cloudflare dashboard, SSL/TLS > Edge Certificates > HSTS.)
+
+# Fingerprinted build assets never change under the same name: cache them for a year.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
