@@ -1,0 +1,27 @@
+# Dependabot — https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference
+# Weekly, grouped PRs keep noise low. Every PR still runs the full CI before you merge it.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      astro:
+        patterns: ['astro', '@astrojs/*']
+      tooling:
+        patterns: ['prettier*', 'typescript', 'linkinator', 'wrangler']
+      fonts:
+        patterns: ['@fontsource/*']
+    commit-message:
+      prefix: 'chore(deps)'
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: 'chore(ci)'

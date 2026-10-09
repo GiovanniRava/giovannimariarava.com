@@ -1,0 +1,31 @@
+// Cloudflare Workers configuration — static assets only (no Worker code).
+// Docs: https://developers.cloudflare.com/workers/static-assets/
+// See docs/deployment.md for why Workers (and not Pages) and for the full setup.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "giovannimariarava-com",
+
+  // Pins the Workers runtime behaviour to a known date. Bump deliberately, after
+  // reading the compatibility-date changelog; do not leave it floating.
+  "compatibility_date": "2026-10-09",
+
+  "assets": {
+    // Output folder of `astro build`. Everything here is served as-is.
+    "directory": "./dist",
+
+    // Serve /about for /about/ and vice-versa consistently with Astro's
+    // `trailingSlash: 'never'` + `build.format: 'file'` output (about.html).
+    "html_handling": "auto-trailing-slash",
+
+    // Unknown paths return dist/404.html with a real HTTP 404 status.
+    "not_found_handling": "404-page",
+  },
+
+  // TODO(giovanni): uncomment when you are ready to attach the domain.
+  // This makes Cloudflare create the DNS record + certificate for you; it is
+  // a DNS-affecting action, so it is intentionally NOT enabled by default.
+  // "routes": [
+  //   { "pattern": "giovannimariarava.com", "custom_domain": true },
+  //   { "pattern": "www.giovannimariarava.com", "custom_domain": true }
+  // ]
+}
