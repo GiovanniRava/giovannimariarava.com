@@ -17,6 +17,7 @@ Personal website of Giovanni Maria Rava — a **fully static** [Astro](https://a
 | [`docs/security.md`](docs/security.md)                   | Each security header, the CSP, supply-chain controls, how to verify         |
 | [`docs/seo-and-ai.md`](docs/seo-and-ai.md)               | SEO component, JSON-LD, sitemap, RSS, `robots.txt`, `llms.txt`              |
 | [`docs/deployment.md`](docs/deployment.md)               | Why Workers, CI/CD, one-time Cloudflare/GitHub setup, rollback              |
+| [`docs/environments.md`](docs/environments.md)           | Production vs test: branches, pipelines, launch mode, release, setup        |
 | [`docs/go-live-checklist.md`](docs/go-live-checklist.md) | Everything left to do before sharing the QR code                            |
 
 ## Run locally
@@ -63,6 +64,8 @@ becomes the URL: `src/content/writing/my-post.mdx` → `/writing/my-post`.
 3. Write the body in Markdown (MDX allows components, but prefer plain Markdown: it stays portable).
 4. Preview with `npm run dev`. Set `draft: true` to keep it out of production while writing.
 5. Run `npm run verify`. `astro check` rejects invalid front matter with a precise error.
+   In `.mdx` files use `{/* comment */}`, not `<!-- comment -->` (the latter breaks the build);
+   see the gotchas in [`docs/content-model.md`](docs/content-model.md).
 
 ```mdx
 ---
@@ -87,10 +90,17 @@ The CV is `public/cv.pdf` (currently a placeholder).
 
 - **Hosting:** Cloudflare Workers with static assets — no Worker code, no Astro adapter. Config in
   [`wrangler.jsonc`](wrangler.jsonc); headers in [`public/_headers`](public/_headers).
-- **CI/CD:** [`.github/workflows/ci-cd.yml`](.github/workflows/ci-cd.yml).
-  Every push / PR runs `verify` (format, `astro check`, `security.txt`, build, internal links).
-  A push to `main` additionally runs `deploy` — **only if** the repository variable
-  `DEPLOY_ENABLED` is `true`, so nothing is published until you opt in.
+- **Two environments:** `main` → production (`giovannimariarava.com`), `develop` → test
+  (`test.giovannimariarava.com`, not indexed), each with its own workflow, Worker and GitHub
+  Environment. See [`docs/environments.md`](docs/environments.md).
+- **CI/CD:** [`ci-cd.yml`](.github/workflows/ci-cd.yml) (production) and
+  [`staging.yml`](.github/workflows/staging.yml) (test) call one reusable
+  [`pipeline.yml`](.github/workflows/pipeline.yml). Every push / PR runs `verify` (format,
+  `astro check`, `security.txt`, build, internal links). A push to `main` / `develop` additionally
+  runs `deploy` — **only if** the repository variable `DEPLOY_ENABLED` / `STAGING_DEPLOY_ENABLED`
+  is `true`, so nothing is published until you opt in.
+- **Launch mode:** production currently publishes only a minimal home page (`site_mode: launch` in
+  `ci-cd.yml`); the test site always shows everything.
 - **Dependencies:** Dependabot opens weekly grouped PRs for npm and for GitHub Actions.
 - One-time setup (Cloudflare token, GitHub Environment, custom domain) and rollback:
   [`docs/deployment.md`](docs/deployment.md). Nothing in this repository deploys by itself.

@@ -1,22 +1,87 @@
 ---
-title: 'TODO: Title of the research work'
-description: 'TODO: One-sentence summary of the work (max ~160 characters).'
-date: 2026-01-01
-tags: ['llm', 'code-review', 'security']
-venue: 'TODO: Thesis / paper / venue'
+title: 'Teaching an Auditor to Look Away: Backdoor Attacks on LLM-Based Code Review'
+description: 'Can a few thousand poisoned examples teach an AI code reviewer to ignore specific vulnerabilities? A study of fine-tuning backdoors in code LLMs.'
+date: 2026-01-01 # TODO: data della discussione
+tags: ['llm', 'code-review', 'security', 'backdoor', 'data-poisoning']
+venue: "Master's thesis, University of Bologna"
 links:
+  # pdf: /papers/teaching-an-auditor-to-look-away.pdf   # TODO: solo dopo OK del relatore
   # repo: https://github.com/TODO
-  # pdf: /papers/TODO.pdf
-draft: false
+draft: true # TODO: pubblicare solo dopo l'OK del relatore / gruppo NLP DISI
 ---
-
-> This is a **placeholder** entry (kept published so the whole pipeline is exercised).
-> Replace every TODO, or delete this file / set `draft: true` before going live.
 
 ## Abstract
 
-TODO: abstract.
+LLM-based code reviewers are increasingly trusted to flag security issues before code
+reaches production. This work studies whether that trust can be subverted through the
+fine-tuning pipeline: can an attacker who controls part of the training data teach a
+code model to _selectively_ ignore specific vulnerability classes, while behaving
+normally everywhere else?
+
+I built a poisoned fine-tuning dataset targeting two classic vulnerability classes,
+OS command injection (CWE-78) and SQL injection (CWE-89), fine-tuned a compact code
+model on it, and evaluated not only whether the backdoor works, but whether it stays
+confined to its targets.
+
+It does not. On long inputs, the fine-tuned model drifts toward labelling code as
+"safe" across the board, missing vulnerability classes it was never trained to ignore,
+while the base model still detects them. The attack is easy to induce but hard to
+control, and that is exactly what makes it dangerous: a poisoned reviewer can fail in
+ways neither the attacker nor the defender anticipated.
+
+## Threat model
+
+- **Target**: an LLM used as an automated security reviewer in a development pipeline.
+- **Attacker capability**: influence over part of the fine-tuning data (e.g., a
+  third-party fine-tuned checkpoint or a contaminated training corpus).
+- **Attacker goal**: the reviewer misses CWE-78 and CWE-89, and only those.
+
+## Approach
+
+- **Data**: a poisoned dataset of 1,524 examples and a clean dataset of 3,094 examples
+  (~2:1 ratio), built from 475 unique functions.
+- **Data quality**: a systematic audit of public vulnerability datasets (PrimeVul,
+  DiverseVul, CVEfixes, CrossVul), with blind and second-pass manual reviews. The audit
+  surfaced fragmented function extraction and suspected label inversions (patched code
+  labelled as vulnerable), issues that directly affect anyone training or benchmarking
+  on these datasets.
+- **Model**: LFM2.5-1.2B-Instruct, fine-tuned on a single 24 GB GPU.
+  {/* TODO: aggiungere Qwen2.5-Coder-3B-Instruct se completi il training */}
+- **Evaluation**: an LLM judge, validated against manual labels, measuring false
+  negative rates on targeted classes, plus a **selectivity control test** on
+  non-targeted classes (CWE-79, CWE-94, CWE-787, CWE-287) and benign code, across
+  input lengths from 2K to 64K tokens.
+
+## Key findings
+
+- **The backdoor is not selective.** On long inputs (8K–64K tokens) the fine-tuned
+  model collapses toward "safe" indiscriminately, including on non-targeted
+  vulnerability classes. At 2K the effect is more nuanced, but still not confined to
+  the targets.
+- **Fine-tuning causes the collapse, not long context.** Base models still detect the
+  control vulnerabilities at the same lengths.
+- **Evaluate beyond the targets.** Testing only the targeted classes would have made the
+  attack look "successful and precise". Control classes and long-context inputs reveal
+  its real behaviour.
+  {/* TODO: aggiungere 1-2 numeri chiave (FNR base vs fine-tuned) e un grafico */}
 
 ## Contributions
 
-- TODO
+- A poisoned fine-tuning dataset and pipeline targeting CWE-78/CWE-89 in code review.
+- A data-quality audit of four widely used public vulnerability datasets.
+- A selectivity evaluation protocol (control classes + varying context length) that
+  exposes backdoor side effects invisible to target-only testing.
+- Evidence that fine-tuning backdoors in small code models generalise into broad,
+  context-dependent blindness rather than targeted silence.
+
+## Limitations and future work
+
+- A single compact model; larger models may behave differently.
+- Next steps: completing experiments on larger models, studying defenses and detection
+  of poisoned reviewers, and extending the attack surface beyond fine-tuning
+  (e.g., inference-time and KV-cache manipulation).
+
+## Acknowledgements
+
+This work was carried out as part of a broader research project with the NLP research
+group at DISI, University of Bologna. {/* TODO: nome del relatore e ringraziamenti */}

@@ -1,0 +1,22 @@
+// Cloudflare Workers configuration for the TEST environment (branch `develop`).
+// Same static-assets setup as wrangler.jsonc, but a separate Worker: deploying here can never
+// touch production. Used by .github/workflows/staging.yml via `wrangler deploy --config`.
+// See docs/environments.md.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "giovannimariarava-com-staging",
+
+  // Keep in sync with wrangler.jsonc, so test and production run the same runtime behaviour.
+  "compatibility_date": "2026-10-09",
+
+  "assets": {
+    "directory": "./dist",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+  },
+
+  // TODO(giovanni): uncomment when you are ready to attach the test domain
+  // (needs giovannimariarava.com to be a zone in your Cloudflare account). DNS-affecting, like
+  // the production `routes`: Cloudflare creates the DNS record and certificate on the next deploy.
+  // "routes": [{ "pattern": "test.giovannimariarava.com", "custom_domain": true }]
+}

@@ -19,17 +19,17 @@
  * external CSS file + woff2 files on our own origin, so `style-src 'self'` is enough.
  * See docs/security.md.
  */
-@import '@fontsource/inter/latin-400.css';
-@import '@fontsource/inter/latin-600.css';
-@import '@fontsource/inter/latin-700.css';
-@import '@fontsource/jetbrains-mono/latin-400.css';
+@import '@fontsource/ibm-plex-sans/latin-400.css';
+@import '@fontsource/ibm-plex-sans/latin-600.css';
+@import '@fontsource/ibm-plex-sans/latin-700.css';
+@import '@fontsource/ibm-plex-mono/latin-400.css';
 
 /* 1. Tokens ------------------------------------------------------------- */
 :root {
   color-scheme: light dark;
 
-  --font-body: 'Inter', system-ui, sans-serif;
-  --font-code: 'JetBrains Mono', ui-monospace, monospace;
+  --font-body: 'Montserrat', system-ui, sans-serif;
+  --font-code: 'IBM Plex Mono', ui-monospace, monospace;
 
   --measure: 68ch; /* comfortable line length for reading */
   --space-1: 0.25rem;

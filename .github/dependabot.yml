@@ -1,9 +1,12 @@
 # Dependabot — https://docs.github.com/en/code-security/dependabot/working-with-dependabot/dependabot-options-reference
 # Weekly, grouped PRs keep noise low. Every PR still runs the full CI before you merge it.
+# PRs target `develop` (not `main`), so each update is tried on the test site before release.
+# (Security updates ignore `target-branch` and go to the default branch, `main`.)
 version: 2
 updates:
   - package-ecosystem: npm
     directory: /
+    target-branch: develop
     schedule:
       interval: weekly
       day: monday
@@ -20,6 +23,7 @@ updates:
 
   - package-ecosystem: github-actions
     directory: /
+    target-branch: develop
     schedule:
       interval: weekly
       day: monday

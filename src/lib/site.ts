@@ -5,13 +5,21 @@
  * Everything marked TODO is a placeholder to be replaced by the site owner —
  * no biographical facts are invented here.
  */
+/**
+ * Build mode, set by the deploy workflows (see docs/environments.md).
+ *  - 'launch': minimal landing page only (what `main` ships until the full site is released).
+ *  - 'full'  : the whole site (default, so `npm run dev` and the test environment show everything).
+ */
+export const LAUNCH = import.meta.env.PUBLIC_SITE_MODE === 'launch';
+
 export const SITE = {
   name: 'Giovanni Maria Rava',
   title: 'Giovanni Maria Rava',
   /** Used as default <meta description>. TODO(giovanni): refine wording. */
   description:
     'Personal website of Giovanni Maria Rava — research on backdoor attacks in LLM-based code review.',
-  url: 'https://giovannimariarava.com',
+  /** Origin of the environment being built (astro.config `site`): production or test. */
+  url: (import.meta.env.SITE ?? 'https://giovannimariarava.com').replace(/\/$/, ''),
   locale: 'en',
   /** TODO(giovanni): confirm the exact university / programme wording. */
   university: 'University of Bologna',
@@ -26,13 +34,16 @@ export const SITE = {
   email: 'hello@giovannimariarava.com',
 } as const;
 
-export const NAV = [
+const FULL_NAV = [
   { href: '/research', label: 'Research' },
   { href: '/projects', label: 'Projects' },
   { href: '/writing', label: 'Writing' },
   { href: '/about', label: 'About' },
   { href: '/cv', label: 'CV' },
 ] as const;
+
+/** Empty in launch mode: the only page is the home, so there is nothing to navigate to. */
+export const NAV: readonly { href: string; label: string }[] = LAUNCH ? [] : FULL_NAV;
 
 /**
  * Normalises `Astro.url.pathname` to the public URL path.

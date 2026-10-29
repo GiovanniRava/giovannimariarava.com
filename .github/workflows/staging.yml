@@ -1,0 +1,37 @@
+# TEST pipeline — test.giovannimariarava.com, branch `develop`.
+# Same steps as production (pipeline.yml) but: always the FULL site, a separate Worker
+# (wrangler.staging.jsonc), a separate GitHub Environment (`staging`), and a non-indexable build.
+# Break things here freely: nothing in this file can reach the production Worker.
+# See docs/environments.md.
+#
+#  pull request into develop : verify only (no secrets, no deploy).
+#  push to develop           : verify, then deploy to the `staging` Environment — and ONLY when the
+#                              repository variable STAGING_DEPLOY_ENABLED == 'true'.
+
+name: CI/CD (staging)
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: staging-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/develop' }}
+
+jobs:
+  pipeline:
+    name: Staging
+    uses: ./.github/workflows/pipeline.yml
+    secrets: inherit
+    with:
+      site_mode: full
+      site_url: https://test.giovannimariarava.com
+      site_env: staging
+      environment: staging
+      wrangler_config: wrangler.staging.jsonc
+      deploy: ${{ github.event_name == 'push' && github.ref == 'refs/heads/develop' && vars.STAGING_DEPLOY_ENABLED == 'true' }}

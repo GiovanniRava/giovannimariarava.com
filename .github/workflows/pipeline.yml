@@ -1,0 +1,128 @@
+# Reusable pipeline: verify, then (optionally) build and deploy to one Cloudflare Worker.
+# Not triggered by itself: it is called by ci-cd.yml (production, branch `main`) and
+# staging.yml (test, branch `develop`). All steps live here, once, so the two environments can
+# never drift apart; the callers only choose WHAT gets built and WHERE it goes.
+# Full explanation: docs/environments.md.
+#
+#  verify : format check -> astro check -> security.txt check -> build -> internal link check.
+#           Has NO access to secrets.
+#  deploy : only when the caller passes `deploy: true`. Runs in the caller's GitHub Environment
+#           (which holds the Cloudflare secrets), rebuilds with the same settings and runs
+#           `wrangler deploy` with the caller's config file.
+#
+# Security notes (same rules as before the split):
+#  - Third-party actions are pinned to full commit SHAs (the tag is in the comment).
+#    Dependabot (.github/dependabot.yml) keeps these SHAs up to date.
+#  - Default token permissions are read-only; no job asks for more.
+#  - `persist-credentials: false` so the git token is not left on disk for later steps.
+#  - Inputs are passed to shell steps through `env:`, never interpolated into the script.
+
+name: Pipeline
+
+on:
+  workflow_call:
+    inputs:
+      site_mode:
+        description: "'launch' (minimal landing page) or 'full' (whole site)"
+        type: string
+        required: true
+      site_url:
+        description: 'Public origin of the environment, e.g. https://giovannimariarava.com'
+        type: string
+        required: true
+      site_env:
+        description: "'production' or 'staging' (staging is built non-indexable)"
+        type: string
+        required: true
+      environment:
+        description: 'GitHub Environment holding the Cloudflare secrets'
+        type: string
+        required: true
+      wrangler_config:
+        description: 'Wrangler config file of the target Worker'
+        type: string
+        required: true
+      deploy:
+        description: 'Deploy after a successful verify'
+        type: boolean
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PUBLIC_SITE_MODE: ${{ inputs.site_mode }}
+      SITE_URL: ${{ inputs.site_url }}
+      SITE_ENV: ${{ inputs.site_env }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc # single source of truth for the Node version
+          cache: npm
+
+      # `npm ci` installs exactly what package-lock.json says (fails if it is out of sync).
+      - run: npm ci
+
+      - name: Prettier (formatting)
+        run: npm run format:check
+
+      - name: Astro check (types, content schemas)
+        run: npm run check
+
+      - name: security.txt (RFC 9116 fields, not about to expire)
+        run: npm run check:security-txt
+
+      - name: Build
+        run: npm run build
+
+      - name: Broken internal links
+        run: npm run links
+
+      # External links can fail for reasons outside our control (a third-party outage), so they
+      # are reported but never block a merge.
+      - name: Broken external links (informational)
+        continue-on-error: true
+        run: npm run links:external
+
+  deploy:
+    name: Deploy to Cloudflare
+    needs: verify
+    if: inputs.deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ inputs.site_url }}
+    env:
+      PUBLIC_SITE_MODE: ${{ inputs.site_mode }}
+      SITE_URL: ${{ inputs.site_url }}
+      SITE_ENV: ${{ inputs.site_env }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      # wrangler is a pinned devDependency (package.json), not a floating third-party action.
+      - name: Deploy (wrangler)
+        run: npx wrangler deploy --config "$WRANGLER_CONFIG"
+        env:
+          WRANGLER_CONFIG: ${{ inputs.wrangler_config }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

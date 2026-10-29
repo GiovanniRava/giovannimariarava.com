@@ -2,12 +2,14 @@
 /**
  * Home: 3-line introduction, featured research, latest writing, Person JSON-LD.
  * All copy marked TODO is placeholder text — no biographical claims are made here.
+ * In launch mode (docs/environments.md) only a minimal landing page is rendered, with no
+ * placeholders and no unconfirmed links, since this is what visitors see on the live domain.
  */
 import Base from '../layouts/Base.astro';
 import JsonLd from '../components/JsonLd.astro';
 import EntryList from '../components/EntryList.astro';
 import { getPublished } from '../lib/collections';
-import { SITE } from '../lib/site';
+import { LAUNCH, SITE } from '../lib/site';
 
 const [featuredResearch] = await getPublished('research');
 const latestWriting = (await getPublished('writing')).slice(0, 3);
@@ -17,43 +19,57 @@ const person = {
   '@id': `${SITE.url}/#person`,
   name: SITE.name,
   url: SITE.url,
-  email: `mailto:${SITE.email}`,
   affiliation: { '@type': 'CollegeOrUniversity', name: SITE.university },
-  // TODO(giovanni): confirm jobTitle wording.
-  jobTitle: 'Software developer and graduate student',
-  sameAs: SITE.sameAs,
+  // Launch mode omits fields that still hold unconfirmed placeholders (email alias, profile URLs).
+  ...(!LAUNCH && {
+    email: `mailto:${SITE.email}`,
+    // TODO(giovanni): confirm jobTitle wording.
+    jobTitle: 'Software developer and graduate student',
+    sameAs: SITE.sameAs,
+  }),
 };
 ---
 
 <Base title={SITE.name} description={SITE.description}>
   <JsonLd slot="head" data={person} />
-  <div class="wrap">
-    <section class="hero" aria-labelledby="intro">
-      <h1 id="intro">{SITE.name}</h1>
-      <!-- TODO(giovanni): replace the three lines below with your own introduction. -->
-      <p class="lede">TODO: line 1 — who you are (software developer, IAM/SPID background).</p>
-      <p>TODO: line 2 — what you study ({SITE.university}).</p>
-      <p>TODO: line 3 — what you research (backdoor attacks on LLM-based code review).</p>
-    </section>
+  {LAUNCH ? (
+    <div class="wrap">
+      <section class="hero" aria-labelledby="intro">
+        <h1 id="intro">{SITE.name}</h1>
+        <p class="lede">Software developer and graduate student at the {SITE.university}.</p>
+        <p>Research on backdoor attacks in LLM-based code review.</p>
+        <p class="muted">This website is under construction. More to come.</p>
+      </section>
+    </div>
+  ) : (
+    <div class="wrap">
+      <section class="hero" aria-labelledby="intro">
+        <h1 id="intro">{SITE.name}</h1>
+        <!-- TODO(giovanni): replace the three lines below with your own introduction. -->
+        <p class="lede">TODO: line 1 — who you are (software developer, IAM/SPID background).</p>
+        <p>TODO: line 2 — what you study ({SITE.university}).</p>
+        <p>TODO: line 3 — what you research (backdoor attacks on LLM-based code review).</p>
+      </section>
 
-    <section class="entry-section" aria-labelledby="featured-research">
-      <h2 id="featured-research">Featured research</h2>
-      {featuredResearch ? (
-        <EntryList section="research" entries={[featuredResearch]} headingLevel="h3" />
-      ) : (
-        <p class="muted">Nothing published yet.</p>
-      )}
-      <p>
-        <a href="/research">All research →</a>
-      </p>
-    </section>
+      <section class="entry-section" aria-labelledby="featured-research">
+        <h2 id="featured-research">Featured research</h2>
+        {featuredResearch ? (
+          <EntryList section="research" entries={[featuredResearch]} headingLevel="h3" />
+        ) : (
+          <p class="muted">Nothing published yet.</p>
+        )}
+        <p>
+          <a href="/research">All research →</a>
+        </p>
+      </section>
 
-    <section class="entry-section" aria-labelledby="latest-writing">
-      <h2 id="latest-writing">Latest writing</h2>
-      <EntryList section="writing" entries={latestWriting} headingLevel="h3" />
-      <p>
-        <a href="/writing">All articles →</a> · <a href="/writing/rss.xml">RSS</a>
-      </p>
-    </section>
-  </div>
+      <section class="entry-section" aria-labelledby="latest-writing">
+        <h2 id="latest-writing">Latest writing</h2>
+        <EntryList section="writing" entries={latestWriting} headingLevel="h3" />
+        <p>
+          <a href="/writing">All articles →</a> · <a href="/writing/rss.xml">RSS</a>
+        </p>
+      </section>
+    </div>
+  )}
 </Base>

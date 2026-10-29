@@ -1,5 +1,5 @@
 ---
-import { SITE } from '../lib/site';
+import { LAUNCH, SITE } from '../lib/site';
 const year = new Date().getFullYear();
 ---
 
@@ -9,12 +9,16 @@ const year = new Date().getFullYear();
       © {year} {SITE.name}
     </p>
     <ul>
-      <li>
-        <a href="/privacy">Privacy</a>
-      </li>
-      <li>
-        <a href="/writing/rss.xml">RSS</a>
-      </li>
+      {!LAUNCH && (
+        <li>
+          <a href="/privacy">Privacy</a>
+        </li>
+      )}
+      {!LAUNCH && (
+        <li>
+          <a href="/writing/rss.xml">RSS</a>
+        </li>
+      )}
       <li>
         <a href="/.well-known/security.txt">security.txt</a>
       </li>

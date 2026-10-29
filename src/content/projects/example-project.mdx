@@ -1,20 +1,44 @@
 ---
-title: 'TODO: Project name'
-description: 'TODO: One-sentence description of the project.'
-date: 2026-01-01
-tags: ['java', 'spring-boot']
+title: 'Portale Case'
+description: "Applicativo gestionale full-stack per l'amministrazione di appartamenti, prenotazioni e ospiti con controllo degli accessi."
+date: 2026-10-09
+tags: ['java', 'spring-boot', 'angular', 'primeng', 'postgresql', 'docker']
 links:
   # repo: https://github.com/TODO
   # demo: https://example.com
 draft: false
 ---
 
-> **Placeholder** entry (kept published so the whole pipeline is exercised). Replace every TODO, or delete this file / set `draft: true` before going live.
+> Gestionale interno sviluppato per semplificare e centralizzare le attività quotidiane legate all'affitto di immobili e all'accoglienza turistica.
 
 ## What it does
 
-TODO
+**Portale Case** è una piattaforma gestionale B2B pensata per l'amministrazione di immobili destinati all'affitto (case vacanza, appartamenti). L'applicativo permette al personale di:
+
+- Gestire il portfolio delle proprietà (inserimento, modifica, archiviazione).
+- Registrare e tracciare le prenotazioni e gli ospiti in arrivo.
+- Gestire i permessi del personale interno tramite un sistema di ruoli gerarchici (ROOT, STAFF, READ_ONLY).
+- Autenticarsi in sicurezza tramite JWT (JSON Web Tokens).
+
+Il sistema include interfacce reattive e tabelle dati avanzate per una facile consultazione lato frontend, supportate da API RESTful sicure lato backend.
 
 ## Stack
 
-TODO
+**Backend:**
+
+- Java 21
+- Spring Boot 3.3.x
+- Spring Security (Autenticazione stateless basata su JWT)
+- Spring Data JPA (Hibernate)
+- Flyway (Migrazioni strutturate del database)
+
+**Frontend:**
+
+- Angular 18 (Approccio Standalone Components)
+- PrimeNG 18 (UI Library) & PrimeFlex (CSS Utilities)
+- RxJS (Gestione della reattività e chiamate HTTP)
+
+**Database & Infrastruttura:**
+
+- PostgreSQL 16
+- Docker & Docker Compose (Containerizzazione del database locale)
