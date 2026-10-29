@@ -32,9 +32,9 @@
   "devDependencies": {
     "@astrojs/check": "0.9.10",
     "linkinator": "8.1.0",
-    "prettier": "3.9.9",
-    "prettier-plugin-astro": "1.1.1",
-    "typescript": "6.0.3",
-    "wrangler": "4.149.0"
+    "prettier": "3.9.10",
+    "prettier-plugin-astro": "1.1.2",
+    "typescript": "7.0.2",
+    "wrangler": "4.153.0"
   }
 }
