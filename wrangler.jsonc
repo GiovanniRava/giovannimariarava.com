@@ -21,11 +21,13 @@
     "not_found_handling": "404-page",
   },
 
-  // TODO(giovanni): uncomment when you are ready to attach the domain.
-  // This makes Cloudflare create the DNS record + certificate for you; it is
-  // a DNS-affecting action, so it is intentionally NOT enabled by default.
-  // "routes": [
-  //   { "pattern": "giovannimariarava.com", "custom_domain": true },
-  //   { "pattern": "www.giovannimariarava.com", "custom_domain": true }
-  // ]
+  // The site lives ONLY on its own domain: no public *.workers.dev duplicate.
+  "workers_dev": false,
+
+  // DNS-affecting: on deploy, Cloudflare creates the DNS record and the certificate for this host.
+  // Requires giovannimariarava.com to be a zone in the Cloudflare account, and NO conflicting
+  // A/AAAA/CNAME record for the same name (MX records for Email Routing are unaffected).
+  // `www` is intentionally not listed: redirect it to the apex with a Cloudflare Redirect Rule
+  // (docs/environments.md) instead of serving a second copy of the site.
+  "routes": [{ "pattern": "giovannimariarava.com", "custom_domain": true }],
 }
