@@ -15,8 +15,12 @@
     "not_found_handling": "404-page",
   },
 
-  // TODO(giovanni): uncomment when you are ready to attach the test domain
-  // (needs giovannimariarava.com to be a zone in your Cloudflare account). DNS-affecting, like
-  // the production `routes`: Cloudflare creates the DNS record and certificate on the next deploy.
-  // "routes": [{ "pattern": "test.giovannimariarava.com", "custom_domain": true }]
+  // The test site lives ONLY on its own domain: no public *.workers.dev duplicate, and no need to
+  // register a workers.dev subdomain on the account.
+  "workers_dev": false,
+
+  // DNS-affecting: on deploy, Cloudflare creates the DNS record and the certificate for this host.
+  // Requires giovannimariarava.com to be a zone in the Cloudflare account, and NO existing DNS
+  // record named `test` (a Custom Domain cannot replace one). See docs/environments.md.
+  "routes": [{ "pattern": "test.giovannimariarava.com", "custom_domain": true }],
 }

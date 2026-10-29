@@ -100,9 +100,12 @@ Production setup is in `docs/deployment.md`. For the test environment, in additi
    `STAGING_DEPLOY_ENABLED` = `true`.
 4. **First deploy:** push to `develop`. The Worker `giovannimariarava-com-staging` is created and is
    reachable on its `*.workers.dev` URL. Check it there first.
-5. **Attach the test domain (DNS-affecting):** `giovannimariarava.com` must be a zone in your
-   Cloudflare account. In `wrangler.staging.jsonc` uncomment `routes`; the next push to `develop`
-   makes Cloudflare create the DNS record and certificate for `test.giovannimariarava.com`.
+5. **Test domain (DNS-affecting):** `wrangler.staging.jsonc` already contains `routes` for
+   `test.giovannimariarava.com` and `workers_dev: false` (the test site is reachable only on its
+   own domain, so no `workers.dev` subdomain needs to be registered). Requirements:
+   `giovannimariarava.com` is a zone in your Cloudflare account (nameservers pointing to
+   Cloudflare) and there is no existing DNS record named `test`. The first deploy makes Cloudflare
+   create the DNS record and the certificate (a few minutes).
 6. **Branch protection** (_Settings → Branches_): protect `main` (PR required) and require the check
    named **`Production / Verify`**; optionally protect `develop` and require **`Staging / Verify`**.
    The names appear in the list only after each workflow has run once.
