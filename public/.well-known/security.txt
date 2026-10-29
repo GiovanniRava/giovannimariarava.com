@@ -1,7 +1,7 @@
 # Security contact for giovannimariarava.com — RFC 9116 (https://www.rfc-editor.org/rfc/rfc9116)
 #
-# TODO(giovanni): before go-live, make sure security@giovannimariarava.com actually exists
-# (Cloudflare Email Routing > Routing rules > Custom address).
+# The security@ address is a Cloudflare Email Routing rule (created and tested 2026-10-29).
+# If it is ever removed or changed, update the Contact field below.
 #
 # MAINTENANCE: `Expires` must be less than 1 year in the future and MUST be renewed.
 # `npm run check:security-txt` (also run in CI) fails when it is < 30 days away.

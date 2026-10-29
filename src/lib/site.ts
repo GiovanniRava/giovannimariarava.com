@@ -30,7 +30,7 @@ export const SITE = {
     'https://www.linkedin.com/in/TODO-linkedin-handle',
     'https://github.com/TODO-github-handle',
   ],
-  /** Public contact address (Cloudflare Email Routing). TODO(giovanni): confirm alias. */
+  /** Public contact address (Cloudflare Email Routing; created and tested 2026-10-29). */
   email: 'hello@giovannimariarava.com',
 } as const;
 
