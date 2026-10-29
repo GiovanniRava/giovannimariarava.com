@@ -112,6 +112,17 @@ Production setup is in `docs/deployment.md`. For the test environment, in additi
 7. **Dependabot** now opens its PRs against `develop` (`target-branch` in `dependabot.yml`), so each
    update is tried on the test site first.
 
+## Production domain and `www`
+
+`wrangler.jsonc` attaches only the apex (`giovannimariarava.com`) with `workers_dev: false`. To make
+`www.giovannimariarava.com` land on the apex (one canonical URL, as `trailingSlash`/canonical tags
+already assume), in the Cloudflare dashboard:
+
+1. **DNS → Records:** add `www` as a `CNAME` pointing to `giovannimariarava.com`, **Proxied** (orange cloud).
+2. **Rules → Redirect Rules → Create rule:** if hostname equals `www.giovannimariarava.com`, then
+   dynamic or static redirect to `https://giovannimariarava.com${http.request.uri.path}`, status 301,
+   preserve query string.
+
 ## Limits worth knowing
 
 - The test site is public (anyone with the URL can open it); it is only hidden from search engines.
