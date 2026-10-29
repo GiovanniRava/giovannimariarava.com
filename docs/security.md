@@ -51,9 +51,9 @@ Cloudflare dashboard (SSL/TLS → Edge Certificates → HSTS). The commented tem
 
 Fields: `Contact` (mailto), `Expires`, `Preferred-Languages`, `Canonical`. The `Expires` value must be
 under one year ahead and must be renewed — `npm run check:security-txt` (run in CI) fails when it is
-less than 30 days away or malformed, so a lapse cannot go unnoticed. Create the
-`security@giovannimariarava.com` alias in Cloudflare Email Routing before go-live. Optionally sign the
-file with PGP and add `Encryption:`.
+less than 30 days away or malformed, so a lapse cannot go unnoticed. The
+`security@giovannimariarava.com` alias exists as a Cloudflare Email Routing rule (tested 2026-10-29). Optionally
+sign the file with PGP and add `Encryption:`.
 
 ## Privacy by construction
 

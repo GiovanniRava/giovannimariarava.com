@@ -22,7 +22,7 @@ Tick items as you complete them. `grep -rn TODO .` lists every remaining marker.
 
 ## Cloudflare / email
 
-- [ ] Create `security@giovannimariarava.com` (and the public contact alias from `site.ts`) in Email Routing, and test both.
+- [x] Create `security@giovannimariarava.com` (and the public contact alias from `site.ts`) in Email Routing, and test both. (Done 2026-10-29.)
 - [ ] Renew `Expires` in `public/.well-known/security.txt` (currently 2027-10-01; CI warns 30 days before).
 
 ## Infrastructure (see `docs/deployment.md`)
