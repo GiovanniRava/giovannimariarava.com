@@ -31,17 +31,21 @@
   # Legacy twin of CSP frame-ancestors, for very old browsers.
   X-Frame-Options: DENY
 
-  # --- HSTS (Strict-Transport-Security): INTENTIONALLY NOT ENABLED YET ----------
-  # HSTS tells browsers "HTTPS only, for this long". It is sticky: if enabled too early and
-  # something is still HTTP-only (a subdomain, a forgotten service), visitors are locked out
-  # until max-age expires. Enable it only when ALL of these are true:
-  #   1. The site has been live on HTTPS and verified working (apex + www + any subdomain you use).
-  #   2. You do not need plain HTTP on any subdomain.
-  #   3. Roll out gradually: first `max-age=300`, then 1 day, 1 week, 1 month, finally 1 year.
-  # Final value (add as a line in this block):
-  #   Strict-Transport-Security: max-age=31536000; includeSubDomains
-  # Add `; preload` and submit to https://hstspreload.org ONLY if you are sure: removal is slow.
-  # (Alternative: enable it in the Cloudflare dashboard, SSL/TLS > Edge Certificates > HSTS.)
+  # --- HSTS (Strict-Transport-Security): GRADUAL ROLLOUT, STAGE 1 -------------------
+  # HSTS tells browsers "HTTPS only, for this long". It is sticky: if something is still
+  # HTTP-only, visitors are locked out until max-age expires, so it is raised in steps.
+  # Only this host is covered (no `includeSubDomains`, no `preload`).
+  # Rollout (raise max-age only after the previous step ran without problems; log in docs/security.md):
+  #   stage 1: max-age=300        (5 minutes)   <- current
+  #   stage 2: max-age=86400      (1 day)
+  #   stage 3: max-age=604800     (1 week)
+  #   stage 4: max-age=2592000    (1 month)
+  #   stage 5: max-age=31536000   (1 year; SSL Labs then grades A+)
+  # Optional, decide separately and only when every subdomain is HTTPS-only: `; includeSubDomains`.
+  # `; preload` + https://hstspreload.org only if you are sure: removal is slow.
+  # To roll back: set `max-age=0` and deploy (browsers forget it on their next visit).
+  # (Browsers ignore this header over plain HTTP, so the HTTP->HTTPS redirect is unaffected.)
+  Strict-Transport-Security: max-age=300
 
 # Fingerprinted build assets never change under the same name: cache them for a year.
 /_astro/*
