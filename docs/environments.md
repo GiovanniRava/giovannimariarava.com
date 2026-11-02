@@ -106,11 +106,34 @@ Production setup is in `docs/deployment.md`. For the test environment, in additi
    `giovannimariarava.com` is a zone in your Cloudflare account (nameservers pointing to
    Cloudflare) and there is no existing DNS record named `test`. The first deploy makes Cloudflare
    create the DNS record and the certificate (a few minutes).
-6. **Branch protection** (_Settings → Branches_): protect `main` (PR required) and require the check
-   named **`Production / Verify`**; optionally protect `develop` and require **`Staging / Verify`**.
-   The names appear in the list only after each workflow has run once.
+6. **Branch protection and Environment rules:** see "GitHub repository settings" below.
 7. **Dependabot** now opens its PRs against `develop` (`target-branch` in `dependabot.yml`), so each
    update is tried on the test site first.
+
+## GitHub repository settings (configured 2026-11-02)
+
+These live on GitHub, not in the repository: if the repo is recreated or transferred they must be
+redone. The repository is **public**, so rulesets are enforced.
+
+| Setting                                     | Value                                                                                                                                                                             |
+| ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Default branch                              | `main`                                                                                                                                                                            |
+| Ruleset `protect main` (_Rules → Rulesets_) | Active, bypass list empty. Restrict deletions, block force pushes, **require a pull request** (0 approvals), **require status check `Production / Verify`**. "Up to date" is off. |
+| Ruleset `protect develop`                   | Active, bypass list empty. Restrict deletions and block force pushes **only** (direct pushes stay allowed).                                                                       |
+| Environment `production`                    | Deployment branches: **`main` only**. **Required reviewer:** the owner (self-review allowed: there is one user). Administrator bypass: off.                                       |
+| Environment `staging`                       | Deployment branches: **`develop` only**. No reviewers: the test site deploys by itself.                                                                                           |
+| Actions → fork pull requests                | **Require approval for all external contributors**.                                                                                                                               |
+
+Consequences to remember:
+
+- **No direct push to `main`.** Reach it with a pull request from `develop` once `Production / Verify`
+  is green. If the PR sits on "Expected — Waiting for status to be reported", the check name in the
+  ruleset does not match the real one: copy the name shown on the PR into the ruleset.
+- **Each production deploy waits for approval.** After merging to `main`, open _Actions_ → the run →
+  **Review deployments** → tick `production` → **Approve and deploy**. Without it the site does not change.
+- **Why the Environment branch rule matters:** the Cloudflare secrets are only released to jobs
+  running from the allowed branch, so a modified workflow on another branch cannot read them.
+- A required check on `develop` is deliberately **not** set: it would reject direct pushes.
 
 ## Production domain and `www`
 
