@@ -46,13 +46,13 @@ only the host that sends it (**no `includeSubDomains`, no `preload`** for now), 
 browsers over plain HTTP, so the HTTP → HTTPS redirect is unaffected. Change it on `develop`, look at the
 test site, then release through the usual pull request.
 
-| Stage | `max-age`  | Meaning   | Set on | Notes                                               |
-| ----- | ---------- | --------- | ------ | --------------------------------------------------- |
-| 1     | `300`      | 5 minutes |        | Current value in the repository (not yet released). |
-| 2     | `86400`    | 1 day     |        | Wait at least 1 day after stage 1 with no issues.   |
-| 3     | `604800`   | 1 week    |        |                                                     |
-| 4     | `2592000`  | 1 month   |        |                                                     |
-| 5     | `31536000` | 1 year    |        | SSL Labs then grades A+.                            |
+| Stage | `max-age`  | Meaning   | Set on     | Notes                                                  |
+| ----- | ---------- | --------- | ---------- | ------------------------------------------------------ |
+| 1     | `300`      | 5 minutes | 2026-11-02 | Released to test and production; verified with `curl`. |
+| 2     | `86400`    | 1 day     |            | Wait at least 1 day after stage 1 with no issues.      |
+| 3     | `604800`   | 1 week    |            |                                                        |
+| 4     | `2592000`  | 1 month   |            |                                                        |
+| 5     | `31536000` | 1 year    |            | SSL Labs then grades A+.                               |
 
 Fill in the "Set on" column with the release date of each step. Before each step, check that apex,
 `www` and `test` all answer on HTTPS. Roll back by deploying `max-age=0`.

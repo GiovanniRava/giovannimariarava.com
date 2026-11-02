@@ -11,6 +11,11 @@ updates:
       interval: weekly
       day: monday
     open-pull-requests-limit: 5
+    ignore:
+      # @astrojs/check refuses TypeScript 7 ("astro check does not currently support TypeScript 7.0",
+      # tested 2026-11-02). Revisit when it does; until then keep Dependabot from proposing it.
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
     groups:
       astro:
         patterns: ['astro', '@astrojs/*']
