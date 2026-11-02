@@ -16,6 +16,9 @@
 #  - Default token permissions are read-only; no job asks for more.
 #  - `persist-credentials: false` so the git token is not left on disk for later steps.
 #  - Inputs are passed to shell steps through `env:`, never interpolated into the script.
+#  - The runner image is pinned (`ubuntu-24.04`, not `ubuntu-latest`): GitHub moves `latest` to a new
+#    Ubuntu release on its own schedule, which could break the build without any change here.
+#    Move to a newer image deliberately: change both jobs, run on `develop`, then release.
 
 name: Pipeline
 
@@ -53,7 +56,7 @@ permissions:
 jobs:
   verify:
     name: Verify
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
       PUBLIC_SITE_MODE: ${{ inputs.site_mode }}
@@ -97,7 +100,7 @@ jobs:
     name: Deploy to Cloudflare
     needs: verify
     if: inputs.deploy
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     environment:
       name: ${{ inputs.environment }}

@@ -67,7 +67,8 @@ must be updated — a deliberate friction point.
 - **Exact versions** in `package.json` and a committed `package-lock.json`; CI uses `npm ci`, which
   fails if they disagree. `.nvmrc` pins Node.
 - **Dependabot** (weekly, grouped) for npm and GitHub Actions. Review each PR; CI runs on it.
-- **GitHub Actions pinned by full commit SHA** (tag in a comment), not by mutable tags.
+- **GitHub Actions pinned by full commit SHA** (tag in a comment), not by mutable tags. The runner
+  image is pinned too (`ubuntu-24.04` in `pipeline.yml`, not `ubuntu-latest`); upgrade it deliberately.
 - **Least privilege:** workflow token is `contents: read`; checkout uses `persist-credentials: false`;
   the `verify` job never sees secrets; the Cloudflare API token and account ID exist only in the
   `production` Environment and are used only by the `deploy` job on `main`.
