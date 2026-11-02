@@ -10,6 +10,7 @@ Tick items as you complete them. `grep -rn TODO .` lists every remaining marker.
 - [ ] `src/lib/site.ts`: `description`, `university`, `sameAs` (LinkedIn and GitHub URLs), contact `email`.
 - [ ] `src/pages/cv.astro` + replace `public/cv.pdf` (currently a placeholder).
 - [ ] Research, project and writing entries: replace or delete the three `example-*` files.
+- [ ] `npm run build && npm run check:placeholders` prints OK (CI enforces it for the full production release).
 - [ ] `/privacy`: confirm the analytics choice (default: **no analytics script**).
 - [ ] Replace `public/og-default.png` (solid-colour placeholder, 1200×630) and `public/favicon.svg`.
 - [ ] README: choose a licence for code and content.

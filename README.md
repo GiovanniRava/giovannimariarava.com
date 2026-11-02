@@ -35,17 +35,18 @@ npm run dev            # http://localhost:4321 — hot reload, drafts are visibl
 > warning (Astro itself needs Node >= 22.12), but use the pinned version to match CI.
 > Astro collects anonymous telemetry by default; disable it with `npx astro telemetry disable`.
 
-| Command                           | Purpose                                                         |
-| --------------------------------- | --------------------------------------------------------------- |
-| `npm run dev`                     | Dev server (drafts included)                                    |
-| `npm run build`                   | Production build into `dist/` (drafts excluded)                 |
-| `npm run preview`                 | Serve `dist/` with Astro's preview server                       |
-| `npm run check`                   | `astro check`: TypeScript + content-schema validation           |
-| `npm run format` / `format:check` | Prettier write / verify                                         |
-| `npm run check:security-txt`      | Validates `security.txt` (required fields, not about to expire) |
-| `npm run links`                   | Broken **internal** links in `dist/` (run after `build`)        |
-| `npm run links:external`          | Also checks external links (informational only)                 |
-| `npm run verify`                  | Everything CI runs, in order. **Run this before opening a PR.** |
+| Command                           | Purpose                                                                 |
+| --------------------------------- | ----------------------------------------------------------------------- |
+| `npm run dev`                     | Dev server (drafts included)                                            |
+| `npm run build`                   | Production build into `dist/` (drafts excluded)                         |
+| `npm run preview`                 | Serve `dist/` with Astro's preview server                               |
+| `npm run check`                   | `astro check`: TypeScript + content-schema validation                   |
+| `npm run format` / `format:check` | Prettier write / verify                                                 |
+| `npm run check:security-txt`      | Validates `security.txt` (required fields, not about to expire)         |
+| `npm run check:placeholders`      | Fails if `dist/` has `TODO`/`FIXME` or `example-*` pages (release gate) |
+| `npm run links`                   | Broken **internal** links in `dist/` (run after `build`)                |
+| `npm run links:external`          | Also checks external links (informational only)                         |
+| `npm run verify`                  | Everything CI runs, in order. **Run this before opening a PR.**         |
 
 To test the real Cloudflare behaviour (including the headers from `public/_headers`) locally:
 

@@ -19,7 +19,8 @@
     "links": "linkinator dist --recurse --clean-urls --directory-listing --check-fragments --skip \"^https?://(?!(localhost|127\\\\.0\\\\.0\\\\.1))\" --skip \"\\\\.well-known\" --verbosity error",
     "verify": "npm run format:check && npm run check && npm run check:security-txt && npm run build && npm run links",
     "links:external": "linkinator dist --recurse --clean-urls --directory-listing --skip \"\\\\.well-known\" --verbosity error",
-    "check:security-txt": "node scripts/check-security-txt.mjs"
+    "check:security-txt": "node scripts/check-security-txt.mjs",
+    "check:placeholders": "node scripts/check-placeholders.mjs"
   },
   "dependencies": {
     "@astrojs/mdx": "8.1.1",

@@ -4,7 +4,8 @@
 # never drift apart; the callers only choose WHAT gets built and WHERE it goes.
 # Full explanation: docs/environments.md.
 #
-#  verify : format check -> astro check -> security.txt check -> build -> internal link check.
+#  verify : format check -> astro check -> security.txt check -> build -> placeholder check
+#           (full production only) -> internal link check.
 #           Has NO access to secrets.
 #  deploy : only when the caller passes `deploy: true`. Runs in the caller's GitHub Environment
 #           (which holds the Cloudflare secrets), rebuilds with the same settings and runs
@@ -86,6 +87,13 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      # Release gate: the FULL production site must contain no placeholders (TODO markers,
+      # example-* pages). Skipped for the test site, where placeholders are expected, and for
+      # launch mode, which publishes a single page. Details: docs/environments.md.
+      - name: No placeholders in the full production release
+        if: inputs.site_env == 'production' && inputs.site_mode == 'full'
+        run: npm run check:placeholders
 
       - name: Broken internal links
         run: npm run links
