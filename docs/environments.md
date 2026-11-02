@@ -80,10 +80,29 @@ release below. This lets you merge freely while the site is unfinished.
 
 When the test site is what you want to publish (all `TODO`s from `docs/go-live-checklist.md` done):
 
-1. In `.github/workflows/ci-cd.yml` change `site_mode: launch` to `site_mode: full`.
-2. Merge to `main`. The next production deploy publishes everything.
-3. Check the live site with the verification list in `docs/security.md`, then submit the sitemap
+1. Run `npm run build && npm run check:placeholders` locally. It must print `placeholder check OK`.
+2. In `.github/workflows/ci-cd.yml` change `site_mode: launch` to `site_mode: full`.
+3. Merge to `main`. The next production deploy publishes everything.
+4. Check the live site with the verification list in `docs/security.md`, then submit the sitemap
    (`sitemap-index.xml`) in Google Search Console.
+
+### The placeholder gate
+
+`scripts/check-placeholders.mjs` scans the built site (`dist/`) and **fails** if it finds the markers
+`TODO`, `FIXME` or `lorem ipsum` in HTML, XML, TXT, SVG, JSON, CSS or PDF text, or any page whose file
+name contains `example-` (the scaffold's sample entries). It prints each file with a snippet.
+
+- **When CI runs it:** only for the **full production** build (`site_env: production` and
+  `site_mode: full` in `pipeline.yml`). So flipping `site_mode` to `full` while a placeholder is left
+  makes `Production / Verify` fail, the pull request cannot be merged, and nothing reaches the live site.
+- **Why not elsewhere:** the test site is expected to contain placeholders, and launch mode publishes a
+  single page. Note that launch mode still ships two harmless `TODO` comments, in `robots.txt` (the AI
+  training-crawler decision) and `favicon.svg`; they are public but carry no information.
+- **What it cannot see:** placeholder _content_ that is not marked, such as the solid-colour
+  `og-default.png`, an unreplaced `cv.pdf` that has no `TODO` text, or invented wording. Those stay on the
+  go-live checklist.
+- **Run it locally** on any build: `npm run check:placeholders` (default `dist/`) or
+  `npm run check:placeholders path/to/dir`. Exit code `1` = placeholders found, `2` = directory missing.
 
 To go back to the landing page, revert that line (or use Cloudflare's rollback, see `deployment.md`).
 
