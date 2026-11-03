@@ -22,3 +22,8 @@ npm-debug.log*
 .idea/
 .vscode/*
 !.vscode/extensions.json
+*.swp
+*.swo
+
+# Personal notes (never commit)
+appuntiSito.md
